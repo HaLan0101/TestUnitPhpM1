@@ -5,104 +5,115 @@ namespace Hangman\Tests;
 use Hangman\Game;
 use Hangman\Word;
 
-class GameTest extends \PHPUnit_Framework_TestCase
+class GameTest extends \PHPUnit\Framework\TestCase
 {
-    public function testIsLetterFound()
-    {
-        $game = new Game(new Word('php'));
-        $this->assertFalse($game->isLetterFound('h'));
+    private $game;
 
-        $game->tryLetter('h');
-        $this->assertTrue($game->isLetterFound('h'));
+    public static $dataGoodLetters = array(
+        array('p'),
+        array('h')
+    );
+
+    public static $dataBadLetters = array(
+        array('x'),
+        array('z')
+    );
+
+    public function getDataGoodLetters(): array
+    {
+        return self::$dataGoodLetters;
     }
 
-    public function testGetRemainingAttempts()
+    public function getDataBadLetters(): array
     {
-        $game = new Game(new Word('php'));
-
-        $game->tryLetter('h');
-        $this->assertEquals(Game::MAX_ATTEMPTS, $game->getRemainingAttempts());
-
-        $game->tryLetter('o');
-        $this->assertEquals(Game::MAX_ATTEMPTS - 1, $game->getRemainingAttempts());
-
-        $game->tryWord('foo');
-        $this->assertEquals(0, $game->getRemainingAttempts());
+        return self::$dataBadLetters;
     }
 
-    public function testIsWonWithWordTrial()
+    public function setUp(): void
     {
-        $game = new Game(new Word('php'));
-        $this->assertFalse($game->isWon());
+        parent::setUp();
+        $stub =
+            $this->getMockBuilder('Hangman\Word')
+                ->setConstructorArgs(array('php'))
+                ->setMethods(null)
+                ->getMock();
 
-        $game->tryWord('php');
-        $this->assertTrue($game->isWon());
+        $this->game = new Game($stub);
     }
 
-    public function testIsWonWithLettersTrial()
+    public function testGameHasStart()
     {
-        $game = new Game(new Word('php'));
-        $this->assertFalse($game->isWon());
+        $this->assertFalse($this->game->isWon());
 
-        $game->tryLetter('h');
-        $this->assertFalse($game->isWon());
+    }
+    public function testNotGameOverAtStart()
+    {
+        $this->assertFalse($this->game->isHanged());
+    }
+    /**
+     * @dataProvider getDataGoodLetters
+     */
+    public function testIsLetterFound($letter)
+    {
 
-        $game->tryLetter('p');
-        $this->assertTrue($game->isWon());
+        $this->game->tryLetter($letter);
+
+        $this->assertTrue($this->game->isLetterFound($letter));
+
     }
 
-    public function testIsHangedWithWordTrial()
+    /**
+     * @dataProvider getDataBadLetters
+     */
+    public function testIsLetterNotFound($letter)
     {
-        $game = new Game(new Word('php'));
-        $this->assertFalse($game->isHanged());
 
-        $game->tryWord('foo');
-        $this->assertTrue($game->isHanged());
+        $this->game->tryLetter($letter);
+
+
+        $this->assertFalse($this->game->isLetterFound($letter));
     }
 
-    public function testIsHangedWithLetterTrial()
+    public function testGameIsWonAfterAGoodWord()
     {
-        $game = new Game(new Word('php'));
 
-        $i = $game->getAttempts();
-        do {
-            $this->assertFalse($game->isHanged());
-            $game->tryLetter('a');
-            $i++;
-        } while ($i < Game::MAX_ATTEMPTS);
+        $this->game->tryWord('php');
 
-        $this->assertTrue($game->isHanged());
+        $this->assertTrue($this->game->isWon());
     }
 
-    public function testTryWord()
+    public function testGetRemainingAttemptsAreEqualsAtStart()
     {
-        $game = new Game(new Word('php'));
-        $this->assertInstanceOf('Hangman\\Word', $game->getWord());
-        $this->assertTrue($game->tryWord('php'));
-        $this->assertEquals(0, $game->getAttempts());
+        $this->assertEquals(Game::MAX_ATTEMPTS, $this->game->getRemainingAttempts());
     }
 
-    public function testTryInvalidWord()
-    {
-        $game = new Game(new Word('php'));
-        $this->assertFalse($game->tryWord('html'));
-        $this->assertEquals(Game::MAX_ATTEMPTS, $game->getAttempts());
+    public function testGameOverWhenAttemptsIs11(){
+        $this->game->setAttempts(11);
+        $this->assertTrue($this->game->isHanged());
     }
 
-    public function testTryLetter()
-    {
-        $game = new Game(new Word('php'));
+    public function testGameNotOverWhenAttemptsIsLessThan11(){
+        $this->game->setAttempts(9);
+        $this->assertFalse($this->game->isHanged());
+    }
 
-        $this->assertFalse($game->tryLetter('3'));
-        $this->assertEquals(1, $game->getAttempts());
+    public function testGetWord(){
+        $this->assertEquals($this->game->getWord(), "php");
+    }
 
-        $this->assertFalse($game->tryLetter('e'));
-        $this->assertEquals(2, $game->getAttempts());
+    public function testGetRemainingAttempts(){
+        $this->game->setAttempts(8);
+        $this->assertEquals($this->game->getRemainingAttempts(), 3);
+    }
 
-        $this->assertTrue($game->tryLetter('p'));
-        $this->assertEquals(2, $game->getAttempts());
+    public function testTryAGoodWord(){
+        $this->assertTrue($this->game->tryWord("php"));
+    }
 
-        $this->assertFalse($game->tryLetter('p'));
-        $this->assertEquals(3, $game->getAttempts());
+    /**
+     * @dataProvider getDataBadLetters
+     */
+    public function testTryBadLetters($letter){
+        $this->assertFalse($this->game->tryLetter($letter));
     }
 }

@@ -2,59 +2,42 @@
 
 namespace Hangman\Tests;
 
+
 use Hangman\Word;
+use InvalidArgumentException;
 
-
-class WordTest extends \PHPUnit_Framework_TestCase
+class WordTest extends \PHPUnit\Framework\TestCase
 {
-    public function testGuessed()
-    {
-        $word = new Word('gobelins');
-        $this->assertFalse($word->isGuessed());
+    private $word;
 
-        $word->guessed();
-        $this->assertTrue($word->isGuessed());
+    public function setUp(): void
+    {
+        parent::setUp();
+//        $this->word = new Word('php', array('p','h'),array('p','h'));
+        $this->word =
+            $this->getMockBuilder('Hangman\Word')
+                ->setConstructorArgs(array('php'))
+                ->setMethods(array('tryLetter'))
+                ->getMock();
+
+        $this->word
+            ->expects($this->exactly(2))
+            ->method('tryLetter');
     }
 
-    public function testGetWord()
+//    public function testException()
+//    {
+//        $this->markTestSkipped();
+//        $this->expectException(InvalidArgumentException::class);
+//        $this->word->tryLetter('p');
+//    }
+
+    public function testMockExcepts()
     {
-        $word = new Word('php');
-        $this->assertEquals(array('p', 'h'), $word->getLetters());
-        $this->assertEquals('php', (string) $word);
-        $this->assertEquals('php', $word->getWord());
+        $this->word->tryLetter('p');
+        $this->word->tryLetter('h');
     }
 
-    public function testIsGuessed()
-    {
-        $word = new Word('php');
-        $word->tryLetter('h');
-        $this->assertFalse($word->isGuessed());
 
-        $word->tryLetter('p');
-        $this->assertTrue($word->isGuessed());
-    }
 
-    public function testTryLetter()
-    {
-        $word = new Word('gobelins');
-        $this->assertTrue($word->tryLetter('g'));
-        $this->assertEquals(array('g'), $word->getFoundLetters());
-    }
-
-    public function testTryLetterWithNonAsciiLetter()
-    {
-        $this->setExpectedException('InvalidArgumentException');
-
-        $word = new Word('gobelins');
-        $word->tryLetter('3');
-    }
-
-    public function testTryLetterWithTriedLetter()
-    {
-        $word = new Word('gobelins');
-        $this->assertFalse($word->tryLetter('a'));
-
-        $this->setExpectedException('InvalidArgumentException');
-        $word->tryLetter('a');
-    }
 }

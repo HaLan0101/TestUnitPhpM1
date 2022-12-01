@@ -4,7 +4,7 @@ namespace Hangman;
 
 use Hangman\Loader\LoaderInterface;
 
-class WordList
+class  WordList
 {
     private $words;
 

@@ -55,6 +55,11 @@ class Game
         return $this->attempts;
     }
 
+    public function setAttempts($value)
+    {
+        return $this->attempts = $value;
+    }
+
     public function tryWord($word)
     {
         if ($word === $this->word->getWord()) {
