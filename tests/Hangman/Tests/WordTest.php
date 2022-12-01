@@ -38,6 +38,17 @@ class WordTest extends \PHPUnit\Framework\TestCase
         $this->word->tryLetter('h');
     }
 
+    public function testGetCountLetterDifferent(){
+        $this->testMockExcepts();
+        $this->assertEquals(count($this->word->getLetters()),2);
+    }
+
+    public function testWordIsNotGuessed(){
+        $this->word->tryLetter('j');
+        $this->word->tryLetter('m');
+        $this->assertFalse($this->word->isGuessed());
+    }
+
 
 
 }

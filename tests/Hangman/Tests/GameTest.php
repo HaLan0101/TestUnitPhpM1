@@ -3,7 +3,6 @@
 namespace Hangman\Tests;
 
 use Hangman\Game;
-use Hangman\Word;
 
 class GameTest extends \PHPUnit\Framework\TestCase
 {
@@ -87,12 +86,12 @@ class GameTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(Game::MAX_ATTEMPTS, $this->game->getRemainingAttempts());
     }
 
-    public function testGameOverWhenAttemptsIs11(){
+    public function testGameOverWhenAttemptsIsMaxAttempts(){
         $this->game->setAttempts(11);
         $this->assertTrue($this->game->isHanged());
     }
 
-    public function testGameNotOverWhenAttemptsIsLessThan11(){
+    public function testGameNotOverWhenAttemptsIsLessThanMaxAttempts(){
         $this->game->setAttempts(9);
         $this->assertFalse($this->game->isHanged());
     }
@@ -116,4 +115,13 @@ class GameTest extends \PHPUnit\Framework\TestCase
     public function testTryBadLetters($letter){
         $this->assertFalse($this->game->tryLetter($letter));
     }
+
+    public function testGetAttemptsAfterTryOneLetter()
+    {
+        $this->game->setAttempts(8);
+        $this->game->tryLetter("m");
+        $this->assertEquals($this->game->getAttempts(),9);
+    }
+
+
 }
