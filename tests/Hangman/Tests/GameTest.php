@@ -124,4 +124,22 @@ class GameTest extends \PHPUnit\Framework\TestCase
     }
 
 
+    public function testInsert(){
+        $this->assertTrue( $this->game->insert("Yayaya",2));
+    }
+
+    public function testUpdate(){
+        $this->game->updateScoreByName("Yayaya",4);
+        $this->assertEquals($this->game->getScoreByName("Yayaya"), 4);
+    }
+
+    public function testUserByName(){
+        $this->assertNotNull($this->game->getUserByName("Yayaya"));
+    }
+
+    public function testDelete(){
+        $this->assertTrue($this->game->deleteByName("Yayaya"));
+    }
+
+
 }

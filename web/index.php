@@ -9,6 +9,27 @@ use Hangman\Loader\TextFileLoader;
 use Hangman\Loader\XmlFileLoader;
 use Hangman\Storage\SessionStorage;
 
+
+
+//$link = mysqli_connect("localhost", "root", "","hangman");
+
+
+//if ($link === false) {
+//    die("ERROR: Could not connect. " . mysqli_connect_error());
+//}
+
+
+//$sql = "INSERT INTO user (id, name, score) VALUES (1, 'Yaya', 0)";
+//if (mysqli_query($link, $sql)) {
+//    echo "Database created successfully";
+//} else {
+//    echo "ERROR: Could not able to execute $sql. " . mysqli_error($link);
+//}
+
+
+//mysqli_close($link);
+
+
 $letters = array(
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
     'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
