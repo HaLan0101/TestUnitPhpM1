@@ -37,12 +37,12 @@ class WordTest extends \PHPUnit\Framework\TestCase
         $this->word->tryLetter('p');
         $this->word->tryLetter('h');
     }
-
+    //Vérifier que le nombre de lettres uniques du mot correspond au count du getLetters()
     public function testGetCountLetterDifferent(){
         $this->testMockExcepts();
         $this->assertEquals(count($this->word->getLetters()),2);
     }
-
+    //Vérifier que le mot n'est pas trouvé avec les mauvaises lettres en input
     public function testWordIsNotGuessed(){
         $this->word->tryLetter('j');
         $this->word->tryLetter('m');

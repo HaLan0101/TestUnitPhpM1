@@ -58,6 +58,9 @@ class Game
         return $this->score;
     }
 
+    public function setScore($value){
+        return $this->score = $value;
+    }
     public function getAttempts()
     {
         return $this->attempts;
